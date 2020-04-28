@@ -1,17 +1,21 @@
 package com.araujo.workshopmongo.resources;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.araujo.workshopmongo.domain.User;
 import com.araujo.workshopmongo.dto.UserDTO;
 import com.araujo.workshopmongo.services.UserService;
+import com.araujo.workshopmongo.services.exception.ObjectNotFoundException;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -27,6 +31,14 @@ public class UserResource {
 		List<UserDTO> userDTO = users.stream().map(user -> new UserDTO(user)).collect(Collectors.toList());
 		
 		return ResponseEntity.ok().body(userDTO);
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<UserDTO> findById(@PathVariable("id") User user) {
+		if(user == null) {
+			throw new ObjectNotFoundException("Usuário não encontrado");
+		}		
+		return ResponseEntity.ok().body(new UserDTO(user));
 	}
 	
 }
